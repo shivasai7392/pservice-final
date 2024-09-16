@@ -1,6 +1,8 @@
 package com.pservice.pservice.controllers;
 
+import com.pservice.pservice.dtos.FakeStoreProductDto;
 import com.pservice.pservice.services.IProductService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -8,9 +10,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-    IProductService productService;
+    private IProductService productService;
 
-    public ProductController(IProductService productService) {
+    public ProductController(@Qualifier("FakeStoreProductService") IProductService productService) {
         this.productService = productService;
     }
 
@@ -18,8 +20,8 @@ public class ProductController {
     public void getAllProducts() {}
 
     @GetMapping("/{id}")
-    public String getProductById(@PathVariable("id") Long id) {
-        return "Product with ids" + id;
+    public FakeStoreProductDto getProductById(@PathVariable("id") Long id) {
+        return this.productService.getProductById(id);
     }
 
     @DeleteMapping("/{id}")
