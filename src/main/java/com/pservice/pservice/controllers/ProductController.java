@@ -1,9 +1,14 @@
 package com.pservice.pservice.controllers;
 
+import com.pservice.pservice.dtos.ExceptionDto;
 import com.pservice.pservice.dtos.FakeStoreProductDto;
 import com.pservice.pservice.dtos.MyAppProductDto;
+import com.pservice.pservice.exceptions.ProductNotFoundException;
 import com.pservice.pservice.services.IProductService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public MyAppProductDto getProductById(@PathVariable("id") Long id) {
+    public MyAppProductDto getProductById(@PathVariable("id") Long id) throws ProductNotFoundException {
         return this.productService.getProductById(id);
     }
 

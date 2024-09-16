@@ -2,6 +2,7 @@ package com.pservice.pservice.services;
 
 import com.pservice.pservice.dtos.FakeStoreProductDto;
 import com.pservice.pservice.dtos.MyAppProductDto;
+import com.pservice.pservice.exceptions.ProductNotFoundException;
 import com.pservice.pservice.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
@@ -38,16 +39,19 @@ public class FakeStoreProductService implements IProductService {
     }
 
     @Override
-    public MyAppProductDto getProductById(Long productId) {
+    public MyAppProductDto getProductById(Long productId) throws ProductNotFoundException {
         RestTemplate restTemplate = this.restTemplateBuilder.build();
         ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.getForEntity(this.getProductUrl, FakeStoreProductDto.class, productId);
         FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
-        assert fakeStoreProductDto != null;
+        if(fakeStoreProductDto == null){
+            throw new ProductNotFoundException("Not Found.");
+        }
+//        assert fakeStoreProductDto != null;
         return convertToMyAppProductDto(fakeStoreProductDto);
     }
 
     @Override
-    public List<MyAppProductDto> getAllProducts() {
+    public List<MyAppProductDto> getAllProducts(){
         RestTemplate restTemplate = this.restTemplateBuilder.build();
         ResponseEntity<FakeStoreProductDto[]> responseEntity = restTemplate.getForEntity(this.getProductsUrl, FakeStoreProductDto[].class);
         List<FakeStoreProductDto> fakeStoreProductDtos = List.of(Objects.requireNonNull(responseEntity.getBody()));
