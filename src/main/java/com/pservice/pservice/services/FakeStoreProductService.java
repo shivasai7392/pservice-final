@@ -8,10 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Service("FakeStoreProductService")
 public class FakeStoreProductService implements IProductService {
     private RestTemplateBuilder restTemplateBuilder;
     private String getProductUrl = "https://fakestoreapi.com/products/{id}";
+    private String getProductsUrl = "https://fakestoreapi.com/products";
+    private String createProductsUrl = "https://fakestoreapi.com/products";
 
     public FakeStoreProductService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplateBuilder = restTemplateBuilder;
@@ -38,8 +44,15 @@ public class FakeStoreProductService implements IProductService {
     }
 
     @Override
-    public void getAllProducts() {
-
+    public List<MyAppProductDto> getAllProducts() {
+        RestTemplate restTemplate = this.restTemplateBuilder.build();
+        ResponseEntity<FakeStoreProductDto[]> responseEntity = restTemplate.getForEntity(this.getProductsUrl, FakeStoreProductDto[].class);
+        List<FakeStoreProductDto> fakeStoreProductDtos = List.of(Objects.requireNonNull(responseEntity.getBody()));
+        List<MyAppProductDto> myAppProductDtos = new ArrayList<>();
+        for(FakeStoreProductDto fakeStoreProductDto: fakeStoreProductDtos){
+            myAppProductDtos.add(convertToMyAppProductDto(fakeStoreProductDto));
+        }
+        return myAppProductDtos;
     }
 
     @Override
@@ -53,7 +66,9 @@ public class FakeStoreProductService implements IProductService {
     }
 
     @Override
-    public void createProduct(Product product) {
-
+    public MyAppProductDto createProduct(MyAppProductDto myAppRequestProductDto) {
+        RestTemplate restTemplate = this.restTemplateBuilder.build();
+        ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.postForEntity(createProductsUrl, myAppRequestProductDto, FakeStoreProductDto.class);
+        return convertToMyAppProductDto(Objects.requireNonNull(responseEntity.getBody()));
     }
 }

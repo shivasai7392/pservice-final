@@ -6,6 +6,7 @@ import com.pservice.pservice.services.IProductService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,7 +19,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public void getAllProducts() {}
+    public List<MyAppProductDto> getAllProducts() {
+        return this.productService.getAllProducts();
+    }
 
     @GetMapping("/{id}")
     public MyAppProductDto getProductById(@PathVariable("id") Long id) {
@@ -30,5 +33,8 @@ public class ProductController {
 
 //    public void updateProductById() {}
 //
-//    public void createProduct() {}
+    @PostMapping
+    public MyAppProductDto createProduct(@RequestBody MyAppProductDto myAppRequestProductDto) {
+        return this.productService.createProduct(myAppRequestProductDto);
+    }
 }
