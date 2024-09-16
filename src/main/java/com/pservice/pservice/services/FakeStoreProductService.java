@@ -4,8 +4,11 @@ import com.pservice.pservice.dtos.FakeStoreProductDto;
 import com.pservice.pservice.dtos.MyAppProductDto;
 import com.pservice.pservice.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -56,8 +59,14 @@ public class FakeStoreProductService implements IProductService {
     }
 
     @Override
-    public void deleteProductById(Long productId) {
+    public MyAppProductDto deleteProductById(Long productId) {
+        RestTemplate restTemplate = this.restTemplateBuilder.build();
 
+        RequestCallback requestCallback = restTemplate.acceptHeaderRequestCallback(FakeStoreProductDto.class);
+        ResponseExtractor<ResponseEntity<FakeStoreProductDto>> responseExtractor = restTemplate.responseEntityExtractor(FakeStoreProductDto.class);
+        ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.execute(getProductUrl, HttpMethod.DELETE, requestCallback, responseExtractor, productId);
+        assert responseEntity != null;
+        return convertToMyAppProductDto(Objects.requireNonNull(responseEntity.getBody()));
     }
 
     @Override

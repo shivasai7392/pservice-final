@@ -29,7 +29,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProductById(@PathVariable("id") Long id) {}
+    public MyAppProductDto deleteProductById(@PathVariable("id") Long id) {
+        return this.productService.deleteProductById(id);
+    }
 
 //    public void updateProductById() {}
 //
