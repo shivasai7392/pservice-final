@@ -1,6 +1,7 @@
 package com.pservice.pservice.services;
 
 import com.pservice.pservice.dtos.FakeStoreProductDto;
+import com.pservice.pservice.dtos.MyAppProductDto;
 import com.pservice.pservice.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,24 @@ public class FakeStoreProductService implements IProductService {
         this.restTemplateBuilder = restTemplateBuilder;
     }
 
+    private static MyAppProductDto convertToMyAppProductDto(FakeStoreProductDto fakeStoreProductDto){
+        MyAppProductDto myAppProductDto = new MyAppProductDto();
+        myAppProductDto.setId(fakeStoreProductDto.getId());
+        myAppProductDto.setTitle(fakeStoreProductDto.getTitle());
+        myAppProductDto.setDescription(fakeStoreProductDto.getDescription());
+        myAppProductDto.setImage(fakeStoreProductDto.getImage());
+        myAppProductDto.setPrice(fakeStoreProductDto.getPrice());
+        myAppProductDto.setCategory(fakeStoreProductDto.getCategory());
+        return myAppProductDto;
+    }
+
     @Override
-    public FakeStoreProductDto getProductById(Long productId) {
+    public MyAppProductDto getProductById(Long productId) {
         RestTemplate restTemplate = this.restTemplateBuilder.build();
         ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.getForEntity(this.getProductUrl, FakeStoreProductDto.class, productId);
-        return responseEntity.getBody();
+        FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
+        assert fakeStoreProductDto != null;
+        return convertToMyAppProductDto(fakeStoreProductDto);
     }
 
     @Override
