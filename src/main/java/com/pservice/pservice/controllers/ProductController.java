@@ -37,8 +37,11 @@ public class ProductController {
         return this.productService.deleteProductById(id);
     }
 
-//    public void updateProductById() {}
-//
+    @PutMapping("/{id}")
+    public MyAppProductDto updateProductById(@PathVariable("id") Long id, @RequestBody MyAppProductDto myAppRequestProductDto) throws ProductNotFoundException {
+        return this.productService.updateProduct(id, myAppRequestProductDto);
+    }
+
     @PostMapping
     public MyAppProductDto createProduct(@RequestBody MyAppProductDto myAppRequestProductDto)  throws ProductNotFoundException {
         return this.productService.createProduct(myAppRequestProductDto);

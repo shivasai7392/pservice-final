@@ -11,6 +11,6 @@ public interface IProductService {
     MyAppProductDto getProductById(Long productId) throws ProductNotFoundException;
     List<MyAppProductDto> getAllProducts() throws ProductNotFoundException ;
     MyAppProductDto deleteProductById(Long productId) throws ProductNotFoundException ;
-    void updateProduct(Product product);
+    MyAppProductDto updateProduct(Long productId, MyAppProductDto myAppProductDto) throws ProductNotFoundException ;
     MyAppProductDto createProduct(MyAppProductDto myAppProductDto) throws ProductNotFoundException ;
 }

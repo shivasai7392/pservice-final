@@ -59,8 +59,9 @@ public class MyAppProductService implements IProductService{
     }
 
     @Override
-    public void updateProduct(Product product) {
-
+    public MyAppProductDto updateProduct(Long productId, MyAppProductDto myAppProductDto) throws ProductNotFoundException {
+        FakeStoreProductDto fakeStoreProductDto = this.fakeProductService.updateProduct(productId, myAppProductDto);
+        return convertToMyAppProductDto(fakeStoreProductDto);
     }
 
     @Override
