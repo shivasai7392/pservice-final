@@ -1,0 +1,87 @@
+package com.pservice.pservice.services;
+
+import com.pservice.pservice.dtos.FakeStoreProductDto;
+import com.pservice.pservice.dtos.MyAppProductDto;
+import com.pservice.pservice.exceptions.ProductNotFoundException;
+import com.pservice.pservice.models.Product;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+@Component
+public class FakeProductServiceImpl {
+    private final RestTemplateBuilder restTemplateBuilder;
+    private final String getProductUrl = "https://fakestoreapi.com/products/{id}";
+    private String getProductsUrl = "https://fakestoreapi.com/products";
+    private String createProductsUrl = "https://fakestoreapi.com/products";
+
+    public FakeProductServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplateBuilder = restTemplateBuilder;
+    }
+
+    private static FakeStoreProductDto convertToFakeStoreProductDto(MyAppProductDto myAppProductDto){
+        FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
+        fakeStoreProductDto.setCategory(myAppProductDto.getCategory());
+        fakeStoreProductDto.setDescription(myAppProductDto.getDescription());
+        fakeStoreProductDto.setImage(myAppProductDto.getImage());
+        fakeStoreProductDto.setPrice(myAppProductDto.getPrice());
+        fakeStoreProductDto.setTitle(myAppProductDto.getTitle());
+        return fakeStoreProductDto;
+    }
+
+    public FakeStoreProductDto getProductById(Long productId) throws ProductNotFoundException {
+        RestTemplate restTemplate = this.restTemplateBuilder.build();
+        ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.getForEntity(this.getProductUrl, FakeStoreProductDto.class, productId);
+        FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
+        if(fakeStoreProductDto == null){
+            throw new ProductNotFoundException("Not Found.");
+        }
+        return fakeStoreProductDto;
+    }
+
+    public List<FakeStoreProductDto> getAllProducts() throws ProductNotFoundException {
+        RestTemplate restTemplate = this.restTemplateBuilder.build();
+        ResponseEntity<FakeStoreProductDto[]> responseEntity = restTemplate.getForEntity(this.getProductsUrl, FakeStoreProductDto[].class);
+        List<FakeStoreProductDto> fakeStoreProductDtos = List.of(responseEntity.getBody());
+        if(fakeStoreProductDtos == null){
+            throw new ProductNotFoundException("Not Found.");
+        }
+        return fakeStoreProductDtos;
+    }
+
+    public FakeStoreProductDto deleteProductById(Long productId) throws ProductNotFoundException {
+        RestTemplate restTemplate = this.restTemplateBuilder.build();
+
+        RequestCallback requestCallback = restTemplate.acceptHeaderRequestCallback(FakeStoreProductDto.class);
+        ResponseExtractor<ResponseEntity<FakeStoreProductDto>> responseExtractor = restTemplate.responseEntityExtractor(FakeStoreProductDto.class);
+        ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.execute(getProductUrl, HttpMethod.DELETE, requestCallback, responseExtractor, productId);
+        FakeStoreProductDto fakeStoreProductDto = responseEntity.getBody();
+        if(fakeStoreProductDto == null){
+            throw new ProductNotFoundException("Not Found.");
+        }
+        return fakeStoreProductDto;
+    }
+
+    public void updateProduct(Product product) {
+
+    }
+
+    public FakeStoreProductDto createProduct(MyAppProductDto myAppProductDto) throws ProductNotFoundException {
+        RestTemplate restTemplate = this.restTemplateBuilder.build();
+        FakeStoreProductDto fakeStoreProductDto = convertToFakeStoreProductDto(myAppProductDto);
+        ResponseEntity<FakeStoreProductDto> responseEntity = restTemplate.postForEntity(createProductsUrl, fakeStoreProductDto, FakeStoreProductDto.class);
+        fakeStoreProductDto = responseEntity.getBody();
+        if(fakeStoreProductDto == null){
+            throw new ProductNotFoundException("Not Found.");
+        }
+        return fakeStoreProductDto;
+    }
+}

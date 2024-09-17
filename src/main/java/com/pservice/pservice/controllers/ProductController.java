@@ -1,6 +1,5 @@
 package com.pservice.pservice.controllers;
 
-import com.pservice.pservice.dtos.ExceptionDto;
 import com.pservice.pservice.dtos.FakeStoreProductDto;
 import com.pservice.pservice.dtos.MyAppProductDto;
 import com.pservice.pservice.exceptions.ProductNotFoundException;
@@ -24,7 +23,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<MyAppProductDto> getAllProducts() {
+    public List<MyAppProductDto> getAllProducts() throws ProductNotFoundException  {
         return this.productService.getAllProducts();
     }
 
@@ -34,14 +33,14 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public MyAppProductDto deleteProductById(@PathVariable("id") Long id) {
+    public MyAppProductDto deleteProductById(@PathVariable("id") Long id) throws ProductNotFoundException  {
         return this.productService.deleteProductById(id);
     }
 
 //    public void updateProductById() {}
 //
     @PostMapping
-    public MyAppProductDto createProduct(@RequestBody MyAppProductDto myAppRequestProductDto) {
+    public MyAppProductDto createProduct(@RequestBody MyAppProductDto myAppRequestProductDto)  throws ProductNotFoundException {
         return this.productService.createProduct(myAppRequestProductDto);
     }
 }

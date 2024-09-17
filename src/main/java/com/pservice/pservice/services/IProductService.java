@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface IProductService {
     MyAppProductDto getProductById(Long productId) throws ProductNotFoundException;
-    List<MyAppProductDto> getAllProducts();
-    MyAppProductDto deleteProductById(Long productId);
+    List<MyAppProductDto> getAllProducts() throws ProductNotFoundException ;
+    MyAppProductDto deleteProductById(Long productId) throws ProductNotFoundException ;
     void updateProduct(Product product);
-    MyAppProductDto createProduct(MyAppProductDto myAppProductDto);
+    MyAppProductDto createProduct(MyAppProductDto myAppProductDto) throws ProductNotFoundException ;
 }
