@@ -4,6 +4,7 @@ import com.pservice.pservice.dtos.FakeStoreProductDto;
 import com.pservice.pservice.dtos.MyAppProductDto;
 import com.pservice.pservice.exceptions.ProductNotFoundException;
 import com.pservice.pservice.models.Product;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,16 @@ import java.util.Objects;
 @Component
 public class FakeProductServiceImpl {
     private final RestTemplateBuilder restTemplateBuilder;
-    private final String getProductUrl = "https://fakestoreapi.com/products/{id}";
-    private String getProductsUrl = "https://fakestoreapi.com/products";
-    private String createProductsUrl = "https://fakestoreapi.com/products";
-
-    public FakeProductServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+    private final String getProductUrl;
+    private final String getProductsUrl;
+    private final String createProductsUrl;
+    public FakeProductServiceImpl(RestTemplateBuilder restTemplateBuilder,
+                                  @Value("${fakestore.api.url}") String fakeStoreApiUrl,
+                                  @Value("${fakestore.api.products.endpoint}") String fakeStoreProductsEndpoint) {
         this.restTemplateBuilder = restTemplateBuilder;
+        this.getProductUrl = fakeStoreApiUrl + fakeStoreProductsEndpoint + "/{id}";
+        this.getProductsUrl = fakeStoreApiUrl + fakeStoreProductsEndpoint;
+        this.createProductsUrl = fakeStoreApiUrl + fakeStoreProductsEndpoint;
     }
 
     private static FakeStoreProductDto convertToFakeStoreProductDto(MyAppProductDto myAppProductDto){
