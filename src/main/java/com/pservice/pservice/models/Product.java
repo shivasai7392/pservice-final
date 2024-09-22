@@ -13,8 +13,8 @@ public class Product extends BaseModel {
     private String title;
     private String description;
     private String image;
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY, optional = false)
+    @JoinColumn(nullable = false)
     private Category category;
     private double price;
 }
